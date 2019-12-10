@@ -28,6 +28,10 @@
   service: "name={{ mysql_daemon }} state=stopped"
   when: not mysql_installed.stat.exists
 
+#fix AC : je sais pas comment ce job pouvait fonctionner en debian 9 / datadir custom
+- command: mysql_install_db --user=mysql --basedir=/usr --datadir={{ mysql_datadir }}
+  when: mysql_installed.stat.exists == false
+
 - name: Delete innodb log files created by apt package after initial install.
   file: path={{ mysql_datadir }}/{{ item }} state=absent
   with_items:
